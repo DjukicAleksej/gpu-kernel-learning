@@ -1,0 +1,25 @@
+seed: 54352; size: 16384
+ ⏱ 2.55 ± 0.002 ms
+ ⚡ 2.54 ms 🐌 2.55 ms
+
+{
+  "done": true,
+  "file_name": "v1_fused_cuda.py",
+  "job": {
+    "error": null,
+    "status": "succeeded"
+  },
+  "leaderboard": "grayscale_v2",
+  "runs": [
+    {
+      "end_time": "2026-08-16T17:18:59.818329Z",
+      "mode": "benchmark",
+      "passed": true,
+      "runner": "A100",
+      "score": null,
+      "secret": false,
+      "start_time": "2026-08-16T17:18:52.250696Z"
+    }
+  ],
+  "submission_id": 936128
+}

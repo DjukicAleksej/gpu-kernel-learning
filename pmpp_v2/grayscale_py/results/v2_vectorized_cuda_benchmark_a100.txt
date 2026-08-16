@@ -1,0 +1,25 @@
+seed: 54352; size: 16384
+ ⏱ 2.37 ± 0.001 ms
+ ⚡ 2.37 ms 🐌 2.37 ms
+
+{
+  "done": true,
+  "file_name": "v2_vectorized_cuda.py",
+  "job": {
+    "error": null,
+    "status": "succeeded"
+  },
+  "leaderboard": "grayscale_v2",
+  "runs": [
+    {
+      "end_time": "2026-08-16T17:22:14.179850Z",
+      "mode": "benchmark",
+      "passed": true,
+      "runner": "A100",
+      "score": null,
+      "secret": false,
+      "start_time": "2026-08-16T17:21:20.633854Z"
+    }
+  ],
+  "submission_id": 936130
+}

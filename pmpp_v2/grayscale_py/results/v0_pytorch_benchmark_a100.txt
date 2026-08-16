@@ -1,0 +1,25 @@
+seed: 54352; size: 16384
+ ⏱ 10.6 ± 0.00 ms
+ ⚡ 10.6 ms 🐌 10.6 ms
+
+{
+  "done": true,
+  "file_name": "v0_pytorch.py",
+  "job": {
+    "error": null,
+    "status": "succeeded"
+  },
+  "leaderboard": "grayscale_v2",
+  "runs": [
+    {
+      "end_time": "2026-08-16T17:16:22.451881Z",
+      "mode": "benchmark",
+      "passed": true,
+      "runner": "A100",
+      "score": null,
+      "secret": false,
+      "start_time": "2026-08-16T17:16:11.603845Z"
+    }
+  ],
+  "submission_id": 936124
+}
