@@ -1,0 +1,9 @@
+﻿GPU Mode grayscale_v2
+GPU: NVIDIA A100
+
+Best ranked runtime: 2378.069 us
+Rank at time recorded: #7
+Correctness: PASSED
+
+Leaderboard:
+https://www.gpumode.com/leaderboard/538

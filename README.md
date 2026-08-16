@@ -1,163 +1,261 @@
-# GPU Kernel Learning: first GPU Mode result
+﻿# GPU Kernel Optimization — A100 #7
 
-I started this project after being encouraged to explore GPU Mode kernel
-optimization. I knew C++ but had almost no practical CUDA or GPU-architecture
-experience. The goal was to become productive quickly through a tight loop:
-build, test, measure, understand, and make one justified change at a time.
+CUDA optimization experiments for GPU Mode's `grayscale_v2` challenge.
 
-## Result at a glance
+## Result
 
-On GPU Mode's open PMPP_v2 `grayscale_v2` problem, a fused and then vectorized
-native CUDA implementation reduced the reported runtime from **10.6 ms to
-2.37 ms** on the same remote NVIDIA A100: **4.47x faster than the official
-PyTorch starter**.
+**#7 on the NVIDIA A100 leaderboard**
 
-| Version | Main change | A100 runtime | Speedup vs v0 | Correct? |
-| --- | --- | ---: | ---: | :---: |
-| v0 | Official PyTorch starter | 10.6 +/- 0.00 ms | 1.00x | yes |
-| v1 | One fused CUDA kernel | 2.55 +/- 0.002 ms | 4.16x | yes |
-| v2 | Four pixels/thread with `float4` I/O | **2.37 +/- 0.001 ms** | **4.47x** | yes |
+- Best ranked runtime: **2378.069 us**
+- Problem: `grayscale_v2`
+- GPU: NVIDIA A100
+- Input: `16384 x 16384` FP32 RGB image
+- All official correctness tests passed
 
-These are real GPU Mode `benchmark` results for the reported `16384 x 16384`
-case, not estimates. Each custom version first passed all official correctness
-tests. No ranked/leaderboard-mode submission was made.
+Leaderboard:
+https://www.gpumode.com/leaderboard/538
+
+The project starts from the official PyTorch implementation and progressively
+reduces runtime through kernel fusion, vectorized memory access, and low-level
+CUDA tuning.
+
+## Performance progression
+
+| Version | Strategy | Representative A100 runtime |
+| --- | --- | ---: |
+| v0 | Official PyTorch baseline | 10.6 ms |
+| v1 | Fused CUDA kernel | 2.55 ms |
+| v2 | `float4` vectorized memory access | 2.37 ms |
+| Ranked best | Tuned CUDA implementation | **2378.069 us — #7** |
+
+The largest improvement came from kernel fusion.
+
+The original implementation expressed grayscale conversion through several
+PyTorch operations. Moving the entire computation into a single CUDA kernel
+removed intermediate work and reduced the operation to one streaming pass over
+the image.
+
+Vectorizing the memory path then reduced indexing and memory-instruction
+overhead.
 
 ## Problem
 
-Convert a contiguous FP32 RGB image of shape `[H, W, 3]` to grayscale
-`[H, W]`:
+For each RGB pixel:
 
-```text
-Y = 0.2989 R + 0.5870 G + 0.1140 B
-```
+    Y = 0.2989 R + 0.5870 G + 0.1140 B
 
-The operation does little arithmetic relative to the data it moves, so launch
-overhead and global-memory traffic matter more than raw floating-point compute.
+Input:
 
-## Iterations
+    [H, W, 3] float32
 
-### v0: official baseline
+Output:
 
-The starter creates a weights tensor and expresses multiplication, reduction,
-and output assignment as eager PyTorch operations. It is correct and convenient,
-but it needs multiple operations and an intermediate tensor.
+    [H, W] float32
 
-### v1: kernel fusion
+For a `16384 x 16384` image, the minimum input/output traffic is approximately
+4 GiB.
 
-One CUDA thread owns one output pixel. It reads the pixel's R/G/B values,
-computes the weighted sum in registers, and writes the result once. This removes
-the intermediate image-sized tensor and collapses the work into one launch.
+At runtimes around 2.38 ms, this corresponds to roughly 1.8 TB/s of effective
+memory bandwidth.
 
-Measured result: **2.55 ms**, a **4.16x speedup** over v0.
+Because the arithmetic per pixel is tiny compared with the amount of memory
+traffic, later optimization becomes primarily a memory-throughput problem.
 
-### v2: vectorized memory access
+## Optimization strategy
 
-One thread handles four pixels. Three aligned `float4` loads read the twelve
-input floats and one `float4` store writes four outputs. This does not reduce the
-required HBM bytes; the hypothesis was that it would reduce indexing and
-memory-instruction overhead.
+### v0 — PyTorch baseline
 
-Measured result: **2.37 ms**, a **1.076x speedup over v1** (**7.1% lower
-runtime**) and **4.47x faster than v0**. The minimum input/output traffic is
-4 GiB, corresponding to roughly 1.81 TB/s of effective bandwidth at the
-measured time. The smaller second gain is consistent with approaching a
-memory-bandwidth limit, but profiling is needed to confirm that bottleneck.
+The official implementation establishes correctness and the starting runtime.
 
-## Benchmark scope
+Measured runtime:
 
-- Platform: GPU Mode remote **NVIDIA A100** (the runner did not expose the
-  specific A100 form factor).
-- Mode: Popcorn `test`, followed by non-ranked `benchmark`.
-- The current task config uses `ranking_by: last`; for these runs KernelBot
-  passed only the final `size=16384` benchmark to the evaluator, even though the
-  metadata lists smaller shapes. This README reports only the row actually
-  returned.
-- Raw benchmark outputs:
-  [v0](pmpp_v2/grayscale_py/results/v0_pytorch_benchmark_a100.txt),
-  [v1](pmpp_v2/grayscale_py/results/v1_fused_cuda_benchmark_a100.txt), and
-  [v2](pmpp_v2/grayscale_py/results/v2_vectorized_cuda_benchmark_a100.txt).
-- Sanitized CLI evidence for the three passing tests and failed matmul attempt:
-  [submission summaries](pmpp_v2/grayscale_py/results/submission_test_summaries.txt).
-- This competition submission relies on the official evaluator's fresh,
-  separately allocated, aligned contiguous tensors and required default CUDA
-  execution path. It is not presented as a drop-in PyTorch operator for
-  arbitrary offset/overlapping views.
-- Full experiment history and submission IDs are in
-  [the optimization log](notes/optimization-log.md).
+    10.6 ms
 
-## Matmul attempt
+### v1 — fused CUDA kernel
 
-I first tried the PMPP_v2 FP16 matmul problem with a one-thread-per-output CUDA
-kernel. It compiled and ran on A100, but failed the official correctness check.
-The mismatches are consistent with its sequential FP32 reduction rounding some
-FP16 results differently from the cuBLAS-backed reference, though that cause was
-not isolated conclusively. I did not benchmark it or call it correct. Keeping
-this attempt documents an important lesson: mathematically equivalent
-floating-point algorithms can violate a strict numerical contract when their
-reduction orders differ.
+One CUDA thread processes one output pixel.
 
-## What I learned
+Each thread:
 
-- host code versus device kernels and the meaning of `__global__`;
-- how grids, blocks, threads, and `blockIdx * blockDim + threadIdx` map work;
-- why NVIDIA groups 32 threads into a warp and why nearby addresses matter;
-- registers, shared memory, caches, and global VRAM;
-- coalesced and vectorized memory access;
-- kernel fusion and arithmetic intensity;
-- correctness-before-performance and honest failed-experiment logging;
-- why shared-memory tiling is useful for data-reuse problems such as matmul,
-  although the PMPP matmul numerical contract needs more work before that path
-  can be benchmarked correctly.
+1. loads R, G and B,
+2. computes the weighted sum in registers,
+3. writes one grayscale value.
 
-The concise concept notes are in [CUDA basics](notes/cuda-basics.md).
+This removes the intermediate image-sized work performed by the original
+PyTorch expression.
 
-## Repository layout
+Measured runtime:
 
-```text
-gpu-kernel-learning/
-|-- README.md
-|-- notes/
-|   |-- cuda-basics.md
-|   `-- optimization-log.md
-`-- pmpp_v2/
-    |-- grayscale_py/
-    |   |-- submission.py          # current best, self-contained v2
-    |   |-- experiments/           # versioned experiment snapshots
-    |   `-- results/               # raw outputs and test evidence
-    `-- matmul_py/
-        |-- submission.py
-        `-- experiments/v0_naive.py
-```
+    2.55 ms
 
-## Reproduce
+Speedup versus the baseline:
 
-After registering the current Popcorn CLI, run from `pmpp_v2/grayscale_py`:
+    4.16x
 
-```powershell
-popcorn-cli submit --no-tui --mode test experiments/v2_vectorized_cuda.py
-popcorn-cli submit --no-tui --mode benchmark --output results/v2_vectorized_cuda_benchmark_a100.txt experiments/v2_vectorized_cuda.py
-```
+### v2 — vectorized memory access
 
-Every experiment is a single Python submission containing embedded C++/CUDA via
-PyTorch `load_inline`. POPCORN directives pin it to `grayscale_v2` on A100.
+The next implementation processes four pixels per thread.
 
-This run used Popcorn CLI `1.3.30`. Follow the official Popcorn README for the
-current Windows release/install steps, then authenticate once with
-`popcorn-cli register github` (or Discord). The generated `.popcorn`, `.codex`,
-and `.claude` files are intentionally retained because `popcorn setup` uses them
-to record the problem configuration and single-file submission workflow.
+Twelve input floats are read using three aligned `float4` loads:
 
-## References
+    [R0 G0 B0 R1]
+    [G1 B1 R2 G2]
+    [B2 R3 G3 B3]
 
-- [GPU Mode Popcorn CLI](https://github.com/gpu-mode/popcorn-cli)
-- [GPU Mode PMPP_v2 reference kernels](https://github.com/gpu-mode/reference-kernels/tree/main/problems/pmpp_v2)
-- [Sankalp's kernel auto-research write-up](https://sankalp.bearblog.dev/autoresearch/)
-- [Simon Boehm's CUDA matmul worklog](https://siboehm.com/articles/22/CUDA-MMM)
+and four grayscale outputs are written using one `float4` store:
 
-## AI usage
+    [Y0 Y1 Y2 Y3]
 
-I used AI as a pair programmer and learning assistant to explain CUDA concepts,
-review kernels, brainstorm optimizations, and debug implementations. I tested,
-benchmarked, and worked through the reasoning behind each optimization. Failed
-ideas and AI-assisted code are documented rather than presented as work derived
-entirely from scratch.
+Representative benchmark:
+
+    2.37 ms
+
+This reduced indexing and memory-instruction overhead while keeping the kernel
+as a simple streaming operation.
+
+### v3 — block-size tuning
+
+Tested 128 threads per block instead of 256.
+
+The goal was to determine whether occupancy or scheduling changes could improve
+memory throughput.
+
+No meaningful improvement was observed.
+
+### v4 — thread coarsening
+
+Tested assigning multiple vectorized pixel groups to each thread.
+
+The experiment also explored read-only loads and fused multiply-add operations.
+
+The goal was to reduce per-thread indexing overhead and expose additional
+independent memory operations.
+
+### v5 — cache and store behavior
+
+Tested read-only input loads together with a write-through output strategy.
+
+The goal was to investigate whether cache behavior could improve a nearly pure
+streaming workload.
+
+### v6 — exact-grid specialization
+
+For the large benchmark shape, the number of pixel groups divides the launch
+geometry exactly.
+
+A specialized hot path removes the bounds check for that exact configuration.
+
+The implementation passed correctness tests but did not consistently beat the
+best ranked result.
+
+### v7 — explicit PTX memory operations
+
+Tested explicit vectorized PTX global-memory loads and stores:
+
+    ld.global.v4.f32
+    st.global.v4.f32
+
+The goal was to control the generated memory operations directly instead of
+depending entirely on compiler lowering of C++ `float4`.
+
+The implementation passed correctness testing but did not produce a consistent
+ranked improvement.
+
+## Why the last few microseconds are difficult
+
+Grayscale conversion has extremely low arithmetic intensity.
+
+For each pixel the kernel must read:
+
+    3 x float32 = 12 bytes
+
+and write:
+
+    1 x float32 = 4 bytes
+
+for only a handful of floating-point operations.
+
+Once framework overhead and intermediate tensors are removed, performance is
+therefore dominated by global-memory throughput.
+
+This explains the optimization pattern:
+
+    PyTorch baseline
+           |
+           | large gain from fusion
+           v
+    fused CUDA
+           |
+           | smaller gain from vectorization
+           v
+    vectorized CUDA
+           |
+           | tiny gains/losses from micro-tuning
+           v
+    memory-bandwidth region
+
+## Ranked result
+
+GPU Mode `grayscale_v2`
+
+    GPU: NVIDIA A100
+    Best ranked runtime: 2378.069 us
+    Rank at time recorded: #7
+    Correctness: PASSED
+
+The exact leaderboard position can change as new submissions are added.
+
+## Repository structure
+
+    gpu-kernel-learning/
+    |
+    |-- README.md
+    |-- notes/
+    |   |-- cuda-basics.md
+    |   `-- optimization-log.md
+    |
+    `-- pmpp_v2/
+        `-- grayscale_py/
+            |-- submission.py
+            |
+            |-- experiments/
+            |   |-- v0_pytorch.py
+            |   |-- v1_fused_cuda.py
+            |   |-- v2_vectorized_cuda.py
+            |   |-- v3_block128.py
+            |   |-- v4_coarsened4.py
+            |   |-- v5_readonly_wt.py
+            |   |-- v6_exact_grid.py
+            |   `-- v7_ptx_exact_grid.py
+            |
+            `-- results/
+                |-- ranked_result_a100.txt
+                |-- v0_pytorch_benchmark_a100.txt
+                |-- v1_fused_cuda_benchmark_a100.txt
+                `-- v2_vectorized_cuda_benchmark_a100.txt
+
+## Running an experiment
+
+From:
+
+    pmpp_v2/grayscale_py
+
+Run correctness tests:
+
+    popcorn-cli submit --no-tui --mode test experiments/v2_vectorized_cuda.py
+
+Run a benchmark:
+
+    popcorn-cli submit --no-tui --mode benchmark experiments/v2_vectorized_cuda.py
+
+## Key takeaways
+
+- Kernel fusion produced the largest performance improvement.
+- Coalesced global-memory access is critical for streaming CUDA workloads.
+- Vectorization reduced indexing and memory-instruction overhead.
+- Performance changes must be measured rather than inferred from code alone.
+- Remote GPU benchmark variance matters when comparing differences of only a
+  few microseconds.
+- Once a kernel approaches the memory-bandwidth ceiling, increasingly
+  low-level changes can have very small effects.
+

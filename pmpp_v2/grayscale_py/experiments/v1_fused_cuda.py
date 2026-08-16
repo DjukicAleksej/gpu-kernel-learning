@@ -1,4 +1,4 @@
-#!POPCORN leaderboard grayscale_v2
+﻿#!POPCORN leaderboard grayscale_v2
 #!POPCORN gpu A100
 
 """v1: fuse RGB weighting and reduction into one native CUDA kernel."""
@@ -86,3 +86,4 @@ _module = load_inline(
 def custom_kernel(data: input_t) -> output_t:
     image, output = data
     return _module.launch_grayscale(image, output)
+

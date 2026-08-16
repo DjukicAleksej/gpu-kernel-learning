@@ -1,4 +1,4 @@
-#!POPCORN leaderboard grayscale_v2
+﻿#!POPCORN leaderboard grayscale_v2
 #!POPCORN gpu A100
 
 """v0: official PMPP_v2 PyTorch starter used only as the measured baseline."""
@@ -17,3 +17,4 @@ def custom_kernel(data: input_t) -> output_t:
     )
     output[...] = torch.sum(image * weights, dim=-1)
     return output
+

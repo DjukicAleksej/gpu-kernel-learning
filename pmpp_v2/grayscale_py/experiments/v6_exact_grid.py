@@ -1,7 +1,7 @@
 ﻿#!POPCORN leaderboard grayscale_v2
 #!POPCORN gpu A100
 
-"""Current best: v2 vectorized native CUDA grayscale kernel."""
+"""v6: specialize v2's exact 256-thread grid to remove the bounds predicate."""
 
 import torch
 from torch.utils.cpp_extension import load_inline
@@ -10,7 +10,7 @@ from task import input_t, output_t
 
 
 CPP_SOURCE = r"""
-torch::Tensor launch_grayscale_vectorized(
+torch::Tensor launch_grayscale_exact_grid(
     torch::Tensor image,
     torch::Tensor output);
 """
@@ -21,17 +21,9 @@ CUDA_SOURCE = r"""
 #include <cuda.h>
 #include <cuda_runtime.h>
 
-__global__ void grayscale_vectorized_kernel(
+__device__ __forceinline__ float4 grayscale_group(
     const float4* __restrict__ image,
-    float4* __restrict__ output,
-    int pixel_groups) {
-    const int group = blockIdx.x * blockDim.x + threadIdx.x;
-    if (group >= pixel_groups) {
-        return;
-    }
-
-    // Four RGB pixels contain 12 floats, represented by three float4 loads:
-    // [R0 G0 B0 R1] [G1 B1 R2 G2] [B2 R3 G3 B3].
+    int group) {
     const float4 values0 = image[group * 3];
     const float4 values1 = image[group * 3 + 1];
     const float4 values2 = image[group * 3 + 2];
@@ -45,10 +37,27 @@ __global__ void grayscale_vectorized_kernel(
         values1.z * 0.2989f + values1.w * 0.5870f + values2.x * 0.1140f;
     grayscale.w =
         values2.y * 0.2989f + values2.z * 0.5870f + values2.w * 0.1140f;
-    output[group] = grayscale;
+    return grayscale;
 }
 
-torch::Tensor launch_grayscale_vectorized(
+__global__ void grayscale_exact_grid_kernel(
+    const float4* __restrict__ image,
+    float4* __restrict__ output) {
+    const int group = (blockIdx.x << 8) + threadIdx.x;
+    output[group] = grayscale_group(image, group);
+}
+
+__global__ void grayscale_guarded_kernel(
+    const float4* __restrict__ image,
+    float4* __restrict__ output,
+    int pixel_groups) {
+    const int group = blockIdx.x * blockDim.x + threadIdx.x;
+    if (group < pixel_groups) {
+        output[group] = grayscale_group(image, group);
+    }
+}
+
+torch::Tensor launch_grayscale_exact_grid(
     torch::Tensor image,
     torch::Tensor output) {
     TORCH_CHECK(image.is_cuda() && output.is_cuda(),
@@ -71,16 +80,22 @@ torch::Tensor launch_grayscale_vectorized(
 
     const int pixel_groups = pixels / 4;
     constexpr int threads = 256;
-    const int blocks = (pixel_groups + threads - 1) / threads;
+    const auto* input_ptr =
+        reinterpret_cast<const float4*>(image.data_ptr<float>());
+    auto* output_ptr = reinterpret_cast<float4*>(output.data_ptr<float>());
 
-    grayscale_vectorized_kernel<<<blocks, threads>>>(
-        reinterpret_cast<const float4*>(image.data_ptr<float>()),
-        reinterpret_cast<float4*>(output.data_ptr<float>()),
-        pixel_groups);
+    if ((pixel_groups & (threads - 1)) == 0) {
+        grayscale_exact_grid_kernel<<<pixel_groups >> 8, threads>>>(
+            input_ptr, output_ptr);
+    } else {
+        grayscale_guarded_kernel<<<
+            (pixel_groups + threads - 1) / threads, threads>>>(
+            input_ptr, output_ptr, pixel_groups);
+    }
 
     const cudaError_t error = cudaGetLastError();
     TORCH_CHECK(error == cudaSuccess,
-                "grayscale_vectorized_kernel launch failed: ",
+                "grayscale exact-grid kernel launch failed: ",
                 cudaGetErrorString(error));
     return output;
 }
@@ -88,10 +103,10 @@ torch::Tensor launch_grayscale_vectorized(
 
 
 _module = load_inline(
-    name="pmpp_grayscale_v2_vectorized_ext",
+    name="pmpp_grayscale_v6_exact_grid_ext",
     cpp_sources=CPP_SOURCE,
     cuda_sources=CUDA_SOURCE,
-    functions=["launch_grayscale_vectorized"],
+    functions=["launch_grayscale_exact_grid"],
     extra_cuda_cflags=["-O3"],
     with_cuda=True,
     verbose=False,
@@ -100,5 +115,5 @@ _module = load_inline(
 
 def custom_kernel(data: input_t) -> output_t:
     image, output = data
-    return _module.launch_grayscale_vectorized(image, output)
+    return _module.launch_grayscale_exact_grid(image, output)
 

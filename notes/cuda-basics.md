@@ -1,4 +1,4 @@
-# CUDA basics used by this project
+﻿# CUDA basics used by this project
 
 ## CPU and GPU
 
@@ -88,7 +88,7 @@ That mapping is parallel and correct in real arithmetic, but it does not
 explicitly share operands. Each `A[row,k]` is useful to many output columns, and
 each `B[k,col]` is useful to many output rows. Re-fetching those values from
 global memory wastes bandwidth. Floating-point addition is also not associative,
-so changing the reduction order can change the rounded result—as the strict
+so changing the reduction order can change the rounded resultâ€”as the strict
 PMPP FP16 check demonstrated.
 
 ## Tiling intuition
@@ -97,3 +97,4 @@ Every output is a dot product, so many neighboring outputs reuse the same rows
 of A and columns/regions of B. A tiled kernel has a block cooperatively load a
 small A tile and B tile into shared memory, synchronize, and reuse those values
 for several multiply-adds before loading the next tiles.
+

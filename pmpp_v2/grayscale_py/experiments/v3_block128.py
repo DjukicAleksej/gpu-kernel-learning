@@ -1,7 +1,7 @@
 ﻿#!POPCORN leaderboard grayscale_v2
 #!POPCORN gpu A100
 
-"""Current best: v2 vectorized native CUDA grayscale kernel."""
+"""v3: keep v2's float4 kernel and isolate a 128-thread launch."""
 
 import torch
 from torch.utils.cpp_extension import load_inline
@@ -10,7 +10,7 @@ from task import input_t, output_t
 
 
 CPP_SOURCE = r"""
-torch::Tensor launch_grayscale_vectorized(
+torch::Tensor launch_grayscale_block128(
     torch::Tensor image,
     torch::Tensor output);
 """
@@ -21,7 +21,7 @@ CUDA_SOURCE = r"""
 #include <cuda.h>
 #include <cuda_runtime.h>
 
-__global__ void grayscale_vectorized_kernel(
+__global__ void grayscale_block128_kernel(
     const float4* __restrict__ image,
     float4* __restrict__ output,
     int pixel_groups) {
@@ -30,8 +30,6 @@ __global__ void grayscale_vectorized_kernel(
         return;
     }
 
-    // Four RGB pixels contain 12 floats, represented by three float4 loads:
-    // [R0 G0 B0 R1] [G1 B1 R2 G2] [B2 R3 G3 B3].
     const float4 values0 = image[group * 3];
     const float4 values1 = image[group * 3 + 1];
     const float4 values2 = image[group * 3 + 2];
@@ -48,7 +46,7 @@ __global__ void grayscale_vectorized_kernel(
     output[group] = grayscale;
 }
 
-torch::Tensor launch_grayscale_vectorized(
+torch::Tensor launch_grayscale_block128(
     torch::Tensor image,
     torch::Tensor output) {
     TORCH_CHECK(image.is_cuda() && output.is_cuda(),
@@ -70,17 +68,17 @@ torch::Tensor launch_grayscale_vectorized(
                 "the even square image must contain a multiple of four pixels");
 
     const int pixel_groups = pixels / 4;
-    constexpr int threads = 256;
+    constexpr int threads = 128;
     const int blocks = (pixel_groups + threads - 1) / threads;
 
-    grayscale_vectorized_kernel<<<blocks, threads>>>(
+    grayscale_block128_kernel<<<blocks, threads>>>(
         reinterpret_cast<const float4*>(image.data_ptr<float>()),
         reinterpret_cast<float4*>(output.data_ptr<float>()),
         pixel_groups);
 
     const cudaError_t error = cudaGetLastError();
     TORCH_CHECK(error == cudaSuccess,
-                "grayscale_vectorized_kernel launch failed: ",
+                "grayscale_block128_kernel launch failed: ",
                 cudaGetErrorString(error));
     return output;
 }
@@ -88,10 +86,10 @@ torch::Tensor launch_grayscale_vectorized(
 
 
 _module = load_inline(
-    name="pmpp_grayscale_v2_vectorized_ext",
+    name="pmpp_grayscale_v3_block128_ext",
     cpp_sources=CPP_SOURCE,
     cuda_sources=CUDA_SOURCE,
-    functions=["launch_grayscale_vectorized"],
+    functions=["launch_grayscale_block128"],
     extra_cuda_cflags=["-O3"],
     with_cuda=True,
     verbose=False,
@@ -100,5 +98,5 @@ _module = load_inline(
 
 def custom_kernel(data: input_t) -> output_t:
     image, output = data
-    return _module.launch_grayscale_vectorized(image, output)
+    return _module.launch_grayscale_block128(image, output)
 

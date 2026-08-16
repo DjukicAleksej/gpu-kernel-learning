@@ -1,4 +1,6 @@
-__pycache__/
-*.py[cod]
-*.json.tmp
-profile.*
+﻿__pycache__/
+*.pyc
+*.pyo
+.popcorn/
+AGENTS.md
+
