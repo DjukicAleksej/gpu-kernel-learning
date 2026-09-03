@@ -1,0 +1,23 @@
+v8 admission rejection
+
+Attempt time: 2026-09-03 approximately 20:27 UTC
+Source: pmpp_v2/grayscale_py/experiments/v8_streaming_store.py
+Requested workflow: Popcorn CLI test, grayscale_v2, A100
+Submission ID: none; rejected before admission
+Tests executed: none
+Ranking eligibility: not eligible; no passed official test or benchmark
+
+Exact CLI rejection:
+Server returned status 400 Bad Request: failed to prepare submission request: 500: Your code contains work on another stream. This is not allowed and may result in your disqualification. If you think this is a mistake, please contact us.
+
+Official static admission-filter source inspected:
+https://github.com/gpu-mode/kernelbot/blob/727212cdcf1b9b4d587c12f6d1484b3fd54549d0/src/kernelbot/api/api_utils.py#L272
+
+At this revision the filter checks whether the literal substring "stream"
+appears anywhere in lowercased submission source, including identifiers and
+comments. The preserved v8 source contains that substring in its description,
+helper name, and module name. The filter's rejection is not a GPU correctness
+result and does not establish that any test ran.
+
+Disposition: preserve the rejected source unchanged and seek organizer review
+before attempting to submit it again. No organizer approval has been obtained.

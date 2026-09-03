@@ -1,7 +1,7 @@
 #!POPCORN leaderboard grayscale_v2
 #!POPCORN gpu A100
 
-"""v10: test v6 with 128-thread blocks while retaining its exact-grid fast path."""
+"""v9: test v6 with 512-thread blocks to halve the exact-grid CTA count."""
 
 import torch
 from torch.utils.cpp_extension import load_inline
@@ -43,7 +43,7 @@ __device__ __forceinline__ float4 grayscale_group(
 __global__ void grayscale_exact_grid_kernel(
     const float4* __restrict__ image,
     float4* __restrict__ output) {
-    const int group = (blockIdx.x << 7) + threadIdx.x;
+    const int group = (blockIdx.x << 9) + threadIdx.x;
     output[group] = grayscale_group(image, group);
 }
 
@@ -79,13 +79,13 @@ torch::Tensor launch_grayscale_exact_grid(
                 "the even square image must contain a multiple of four pixels");
 
     const int pixel_groups = pixels / 4;
-    constexpr int threads = 128;
+    constexpr int threads = 512;
     const auto* input_ptr =
         reinterpret_cast<const float4*>(image.data_ptr<float>());
     auto* output_ptr = reinterpret_cast<float4*>(output.data_ptr<float>());
 
     if ((pixel_groups & (threads - 1)) == 0) {
-        grayscale_exact_grid_kernel<<<pixel_groups >> 7, threads>>>(
+        grayscale_exact_grid_kernel<<<pixel_groups >> 9, threads>>>(
             input_ptr, output_ptr);
     } else {
         grayscale_guarded_kernel<<<
@@ -103,7 +103,7 @@ torch::Tensor launch_grayscale_exact_grid(
 
 
 _module = load_inline(
-    name="pmpp_grayscale_v10_block128_ext",
+    name="pmpp_grayscale_v9_block512_ext",
     cpp_sources=CPP_SOURCE,
     cuda_sources=CUDA_SOURCE,
     functions=["launch_grayscale_exact_grid"],

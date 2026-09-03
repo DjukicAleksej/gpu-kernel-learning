@@ -1,7 +1,7 @@
 #!POPCORN leaderboard grayscale_v2
 #!POPCORN gpu A100
 
-"""v10: test v6 with 128-thread blocks while retaining its exact-grid fast path."""
+"""v8: retain v6 exactly except for cached-streaming float4 output stores."""
 
 import torch
 from torch.utils.cpp_extension import load_inline
@@ -40,11 +40,25 @@ __device__ __forceinline__ float4 grayscale_group(
     return grayscale;
 }
 
+__device__ __forceinline__ void store_streaming(
+    float4* output,
+    int group,
+    const float4& value) {
+    // PTX .cs is an evict-first cache hint, not a change to store semantics.
+    // https://docs.nvidia.com/cuda/parallel-thread-execution/#cache-operators
+    asm volatile(
+        "st.global.cs.v4.f32 [%0], {%1, %2, %3, %4};"
+        :
+        : "l"(output + group),
+          "f"(value.x), "f"(value.y), "f"(value.z), "f"(value.w)
+        : "memory");
+}
+
 __global__ void grayscale_exact_grid_kernel(
     const float4* __restrict__ image,
     float4* __restrict__ output) {
-    const int group = (blockIdx.x << 7) + threadIdx.x;
-    output[group] = grayscale_group(image, group);
+    const int group = (blockIdx.x << 8) + threadIdx.x;
+    store_streaming(output, group, grayscale_group(image, group));
 }
 
 __global__ void grayscale_guarded_kernel(
@@ -53,7 +67,7 @@ __global__ void grayscale_guarded_kernel(
     int pixel_groups) {
     const int group = blockIdx.x * blockDim.x + threadIdx.x;
     if (group < pixel_groups) {
-        output[group] = grayscale_group(image, group);
+        store_streaming(output, group, grayscale_group(image, group));
     }
 }
 
@@ -79,13 +93,13 @@ torch::Tensor launch_grayscale_exact_grid(
                 "the even square image must contain a multiple of four pixels");
 
     const int pixel_groups = pixels / 4;
-    constexpr int threads = 128;
+    constexpr int threads = 256;
     const auto* input_ptr =
         reinterpret_cast<const float4*>(image.data_ptr<float>());
     auto* output_ptr = reinterpret_cast<float4*>(output.data_ptr<float>());
 
     if ((pixel_groups & (threads - 1)) == 0) {
-        grayscale_exact_grid_kernel<<<pixel_groups >> 7, threads>>>(
+        grayscale_exact_grid_kernel<<<pixel_groups >> 8, threads>>>(
             input_ptr, output_ptr);
     } else {
         grayscale_guarded_kernel<<<
@@ -103,7 +117,7 @@ torch::Tensor launch_grayscale_exact_grid(
 
 
 _module = load_inline(
-    name="pmpp_grayscale_v10_block128_ext",
+    name="pmpp_grayscale_v8_streaming_store_ext",
     cpp_sources=CPP_SOURCE,
     cuda_sources=CUDA_SOURCE,
     functions=["launch_grayscale_exact_grid"],

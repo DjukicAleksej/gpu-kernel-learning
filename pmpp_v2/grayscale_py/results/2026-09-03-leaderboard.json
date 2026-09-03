@@ -1,0 +1,93 @@
+{
+  "retrieved_at_utc": "2026-09-03T20:39:32.4148966Z",
+  "endpoint": "https://www.gpumode.com/api/leaderboard/538",
+  "page": "https://www.gpumode.com/leaderboard/538",
+  "leaderboard": "grayscale_v2",
+  "leaderboard_id": 538,
+  "gpu": "A100",
+  "score_units": "seconds; lower is better",
+  "sanitized": true,
+  "selection": "Top 10 A100 entries plus DjukicAleksej, using public ranking fields only",
+  "total_a100_entries": 106,
+  "top10": [
+    {
+      "rank": 1,
+      "user_name": "salad",
+      "score": 0.002346666653951009,
+      "submission_id": 880388,
+      "file_name": "palad.py"
+    },
+    {
+      "rank": 2,
+      "user_name": "Kernel-Zhang",
+      "score": 0.0023743999600410464,
+      "submission_id": 786700,
+      "file_name": "submission.py"
+    },
+    {
+      "rank": 3,
+      "user_name": "thom.gg",
+      "score": 0.0023749119639396668,
+      "submission_id": 781388,
+      "file_name": "grayscale_submission_v2.py"
+    },
+    {
+      "rank": 4,
+      "user_name": "HayatoFujihara",
+      "score": 0.0023749119639396668,
+      "submission_id": 230431,
+      "file_name": "grayscale_v2_11.py"
+    },
+    {
+      "rank": 5,
+      "user_name": "shivbhatia",
+      "score": 0.00237499729792277,
+      "submission_id": 779876,
+      "file_name": "submission.py"
+    },
+    {
+      "rank": 6,
+      "user_name": "dannywillowliu-uchi",
+      "score": 0.00237499729792277,
+      "submission_id": 607835,
+      "file_name": "submission.py"
+    },
+    {
+      "rank": 7,
+      "user_name": "DjukicAleksej",
+      "score": 0.0023756799697875978,
+      "submission_id": 940445,
+      "file_name": "v10_block128.py"
+    },
+    {
+      "rank": 8,
+      "user_name": "MatrixGod-max",
+      "score": 0.002380032002925873,
+      "submission_id": 688313,
+      "file_name": "grayscale_submission.py"
+    },
+    {
+      "rank": 9,
+      "user_name": "badelsteinlelbach",
+      "score": 0.002386944055557251,
+      "submission_id": 784373,
+      "file_name": "submission.py"
+    },
+    {
+      "rank": 10,
+      "user_name": "davidberard",
+      "score": 0.0023891968727111816,
+      "submission_id": 44151,
+      "file_name": "combined.py"
+    }
+  ],
+  "user": [
+    {
+      "rank": 7,
+      "user_name": "DjukicAleksej",
+      "score": 0.0023756799697875978,
+      "submission_id": 940445,
+      "file_name": "v10_block128.py"
+    }
+  ]
+}

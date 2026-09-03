@@ -6,7 +6,7 @@ CUDA optimization experiments for GPU Mode's `grayscale_v2` challenge.
 
 **#7 on the NVIDIA A100 leaderboard**
 
-- Best ranked runtime: **2378.069 us**
+- Best ranked runtime: **2375.680 us** (v10, submission 940445)
 - Problem: `grayscale_v2`
 - GPU: NVIDIA A100
 - Input: `16384 x 16384` FP32 RGB image
@@ -26,7 +26,7 @@ CUDA tuning.
 | v0 | Official PyTorch baseline | 10.6 ms |
 | v1 | Fused CUDA kernel | 2.55 ms |
 | v2 | `float4` vectorized memory access | 2.37 ms |
-| Ranked best | Tuned CUDA implementation | **2378.069 us — #7** |
+| Ranked best | v10: 128-thread exact-grid CUDA | **2375.680 us — #7** |
 
 The largest improvement came from kernel fusion.
 
@@ -199,11 +199,28 @@ This explains the optimization pattern:
 GPU Mode `grayscale_v2`
 
     GPU: NVIDIA A100
-    Best ranked runtime: 2378.069 us
+    Best ranked runtime: 2375.680 us
     Rank at time recorded: #7
     Correctness: PASSED
 
 The exact leaderboard position can change as new submissions are added.
+
+## September 3 follow-up
+
+The top-three goal is still in progress. Fresh official runs and recovered
+historical results are recorded with full precision in
+[the optimization log](notes/optimization-log.md#september-3-2026-follow-up)
+and [public API evidence](pmpp_v2/grayscale_py/results/2026-09-03-public-evidence.json).
+Benchmark times are not ranked scores. `submission.py` is an exact copy of v10,
+the kernel that earned the best verified ranked result (940445). The original
+v2 result was 2378.069 us; the new score improves it by 2.389 us. The gap to
+third place at verification was 0.768 us, so the top-three goal remains open.
+
+New isolated experiments include v8's cached-streaming output stores, v9's
+512-thread blocks, and v10's 128-thread exact grid. v8 was rejected before GPU
+testing by the service's source-admission filter and is paused pending organizer
+review; it must not be ranked. The rejection and its source-level explanation
+are preserved in [the rejection record](pmpp_v2/grayscale_py/results/v8_admission_rejection.txt).
 
 ## Repository structure
 
@@ -226,7 +243,10 @@ The exact leaderboard position can change as new submissions are added.
             |   |-- v4_coarsened4.py
             |   |-- v5_readonly_wt.py
             |   |-- v6_exact_grid.py
-            |   `-- v7_ptx_exact_grid.py
+            |   |-- v7_ptx_exact_grid.py
+            |   |-- v8_streaming_store.py
+            |   |-- v9_block512.py
+            |   `-- v10_block128.py
             |
             `-- results/
                 |-- ranked_result_a100.txt
@@ -242,11 +262,11 @@ From:
 
 Run correctness tests:
 
-    popcorn-cli submit --no-tui --mode test experiments/v2_vectorized_cuda.py
+    popcorn-cli submit --no-tui --mode test submission.py
 
 Run a benchmark:
 
-    popcorn-cli submit --no-tui --mode benchmark experiments/v2_vectorized_cuda.py
+    popcorn-cli submit --no-tui --mode benchmark submission.py
 
 ## Key takeaways
 

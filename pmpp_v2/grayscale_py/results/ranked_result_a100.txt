@@ -1,9 +1,18 @@
 ﻿GPU Mode grayscale_v2
 GPU: NVIDIA A100
 
-Best ranked runtime: 2378.069 us
+Best ranked runtime: 2375.6799697875978 us
+Submission ID: 940445
+Scored file: v10_block128.py
+Canonical submission.py: exact copy of experiments/v10_block128.py
+Verified date: 2026-09-03 UTC
 Rank at time recorded: #7
 Correctness: PASSED
+
+Previous best: 2378.0693213144937 us (v2, 936167)
+Current third-place threshold: 2374.9119639396668 us
+Remaining gap: 0.768005847931 us
+Goal status: top three not yet achieved
 
 Leaderboard:
 https://www.gpumode.com/leaderboard/538
