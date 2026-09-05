@@ -226,6 +226,9 @@ The later v11 experiment tested 64-thread blocks. It passed correctness but
 ranked slower, so the canonical implementation remains v10. Full benchmark
 comparisons and submission IDs are recorded in the optimization log.
 
+v12 then tested two adjacent vector groups per thread. It also passed all
+correctness checks but ranked slower, so it was not promoted or repeated.
+
 ## Repository structure
 
     gpu-kernel-learning/
@@ -251,7 +254,8 @@ comparisons and submission IDs are recorded in the optimization log.
             |   |-- v8_streaming_store.py
             |   |-- v9_block512.py
             |   |-- v10_block128.py
-            |   `-- v11_block64.py
+            |   |-- v11_block64.py
+            |   `-- v12_coarsened2.py
             |
             `-- results/
                 |-- ranked_result_a100.txt

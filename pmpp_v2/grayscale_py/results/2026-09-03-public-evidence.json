@@ -3,7 +3,7 @@
   "source": "Official authenticated Popcorn user-submission API",
   "source_implementation": "https://github.com/gpu-mode/popcorn-cli/blob/main/src/service/mod.rs",
   "sanitized": true,
-  "latest_append_retrieved_at_utc": "2026-09-03T21:33:43.8359483Z",
+  "latest_append_retrieved_at_utc": "2026-09-05T14:42:46.6569986Z",
   "canonical_source_verification": {
     "verified_at_utc": "2026-09-03T21:33:47.0623041Z",
     "canonical_source": "pmpp_v2/grayscale_py/submission.py",
@@ -938,6 +938,180 @@
           "start_time": "2026-09-03T21:31:25.48722Z",
           "end_time": "2026-09-03T21:31:36.64362Z",
           "score_seconds": "0.0023907249524043155",
+          "result": null
+        }
+      ]
+    },
+    {
+      "submission_id": 940605,
+      "endpoint": "https://site--bot--dxfjds728w5v.code.run/user/submissions/940605",
+      "leaderboard": "grayscale_v2",
+      "leaderboard_id": 538,
+      "submitted_file_name": "v12_coarsened2.py",
+      "submitted_at": "2026-09-05T14:38:07.29085Z",
+      "done": true,
+      "retrieved_at_utc": "2026-09-05T14:42:46.6569986Z",
+      "local_source": "pmpp_v2/grayscale_py/experiments/v12_coarsened2.py",
+      "source_normalization": "Remove leading U+FEFF BOM, CRLF to LF, then trim trailing whitespace; SHA-256 of UTF-8 without BOM",
+      "remote_leading_utf8_bom": false,
+      "remote_code_normalized_sha256": "3a3837da8327c0183b825ad346c47a2fcf28f89f1f5a6d1157a012095a236506",
+      "local_code_normalized_sha256": "3a3837da8327c0183b825ad346c47a2fcf28f89f1f5a6d1157a012095a236506",
+      "code_matches_local_source": true,
+      "public_runs": [
+        {
+          "mode": "test",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-09-05T14:38:15.622934Z",
+          "end_time": "2026-09-05T14:39:44.068251Z",
+          "score_seconds": null,
+          "result": {
+            "check": "pass",
+            "test-count": "3",
+            "test.0.spec": "seed: 1001; size: 128",
+            "test.1.spec": "seed: 5531; size: 256",
+            "test.2.spec": "seed: 9173; size: 512",
+            "test.0.status": "pass",
+            "test.1.status": "pass",
+            "test.2.status": "pass"
+          }
+        }
+      ]
+    },
+    {
+      "submission_id": 940606,
+      "endpoint": "https://site--bot--dxfjds728w5v.code.run/user/submissions/940606",
+      "leaderboard": "grayscale_v2",
+      "leaderboard_id": 538,
+      "submitted_file_name": "v10_block128.py",
+      "submitted_at": "2026-09-05T14:39:20.160539Z",
+      "done": true,
+      "retrieved_at_utc": "2026-09-05T14:42:46.6569986Z",
+      "local_source": "pmpp_v2/grayscale_py/experiments/v10_block128.py",
+      "source_normalization": "Remove leading U+FEFF BOM, CRLF to LF, then trim trailing whitespace; SHA-256 of UTF-8 without BOM",
+      "remote_leading_utf8_bom": false,
+      "remote_code_normalized_sha256": "d6531c1309a8d56f53590fc7cf545fe002e3eb9cbdb5730c34c805f5034efc6d",
+      "local_code_normalized_sha256": "d6531c1309a8d56f53590fc7cf545fe002e3eb9cbdb5730c34c805f5034efc6d",
+      "code_matches_local_source": true,
+      "public_runs": [
+        {
+          "mode": "benchmark",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-09-05T14:39:29.082447Z",
+          "end_time": "2026-09-05T14:41:16.916783Z",
+          "score_seconds": null,
+          "result": {
+            "check": "pass",
+            "benchmark-count": "1",
+            "benchmark.0.err": "903.0899906970992",
+            "benchmark.0.std": "1564.1977476942805",
+            "benchmark.0.best": "2368511.915206909",
+            "benchmark.0.mean": "2369877.258936564",
+            "benchmark.0.runs": "3",
+            "benchmark.0.spec": "seed: 54352; size: 16384",
+            "benchmark.0.worst": "2371583.938598633"
+          }
+        }
+      ]
+    },
+    {
+      "submission_id": 940607,
+      "endpoint": "https://site--bot--dxfjds728w5v.code.run/user/submissions/940607",
+      "leaderboard": "grayscale_v2",
+      "leaderboard_id": 538,
+      "submitted_file_name": "v12_coarsened2.py",
+      "submitted_at": "2026-09-05T14:39:57.12938Z",
+      "done": true,
+      "retrieved_at_utc": "2026-09-05T14:42:46.6569986Z",
+      "local_source": "pmpp_v2/grayscale_py/experiments/v12_coarsened2.py",
+      "source_normalization": "Remove leading U+FEFF BOM, CRLF to LF, then trim trailing whitespace; SHA-256 of UTF-8 without BOM",
+      "remote_leading_utf8_bom": false,
+      "remote_code_normalized_sha256": "3a3837da8327c0183b825ad346c47a2fcf28f89f1f5a6d1157a012095a236506",
+      "local_code_normalized_sha256": "3a3837da8327c0183b825ad346c47a2fcf28f89f1f5a6d1157a012095a236506",
+      "code_matches_local_source": true,
+      "public_runs": [
+        {
+          "mode": "benchmark",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-09-05T14:39:57.551181Z",
+          "end_time": "2026-09-05T14:40:11.233287Z",
+          "score_seconds": null,
+          "result": {
+            "check": "pass",
+            "benchmark-count": "1",
+            "benchmark.0.err": "2238.2106162293426",
+            "benchmark.0.std": "3876.6945053492673",
+            "benchmark.0.best": "2362368.106842041",
+            "benchmark.0.mean": "2366805.3150177",
+            "benchmark.0.runs": "3",
+            "benchmark.0.spec": "seed: 54352; size: 16384",
+            "benchmark.0.worst": "2369535.9230041504"
+          }
+        }
+      ]
+    },
+    {
+      "submission_id": 940608,
+      "endpoint": "https://site--bot--dxfjds728w5v.code.run/user/submissions/940608",
+      "leaderboard": "grayscale_v2",
+      "leaderboard_id": 538,
+      "submitted_file_name": "v12_coarsened2.py",
+      "submitted_at": "2026-09-05T14:40:45.0646Z",
+      "done": true,
+      "retrieved_at_utc": "2026-09-05T14:42:46.6569986Z",
+      "local_source": "pmpp_v2/grayscale_py/experiments/v12_coarsened2.py",
+      "source_normalization": "Remove leading U+FEFF BOM, CRLF to LF, then trim trailing whitespace; SHA-256 of UTF-8 without BOM",
+      "remote_leading_utf8_bom": false,
+      "remote_code_normalized_sha256": "3a3837da8327c0183b825ad346c47a2fcf28f89f1f5a6d1157a012095a236506",
+      "local_code_normalized_sha256": "3a3837da8327c0183b825ad346c47a2fcf28f89f1f5a6d1157a012095a236506",
+      "code_matches_local_source": true,
+      "public_runs": [
+        {
+          "mode": "test",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-09-05T14:40:45.44897Z",
+          "end_time": "2026-09-05T14:40:59.62483Z",
+          "score_seconds": null,
+          "result": {
+            "check": "pass",
+            "test-count": "3",
+            "test.0.spec": "seed: 1001; size: 128",
+            "test.1.spec": "seed: 5531; size: 256",
+            "test.2.spec": "seed: 9173; size: 512",
+            "test.0.status": "pass",
+            "test.1.status": "pass",
+            "test.2.status": "pass"
+          }
+        },
+        {
+          "mode": "benchmark",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-09-05T14:40:59.625374Z",
+          "end_time": "2026-09-05T14:41:13.876048Z",
+          "score_seconds": null,
+          "result": {
+            "check": "pass",
+            "benchmark-count": "1",
+            "benchmark.0.err": "1487.848835190709",
+            "benchmark.0.std": "2577.029776532481",
+            "benchmark.0.best": "2369535.9230041504",
+            "benchmark.0.mean": "2371925.2745310464",
+            "benchmark.0.runs": "3",
+            "benchmark.0.spec": "seed: 54352; size: 16384",
+            "benchmark.0.worst": "2374655.9619903564"
+          }
+        },
+        {
+          "mode": "leaderboard",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-09-05T14:41:13.876598Z",
+          "end_time": "2026-09-05T14:41:29.403237Z",
+          "score_seconds": "0.0023991181982888116",
           "result": null
         }
       ]

@@ -1,5 +1,5 @@
 {
-  "retrieved_at_utc": "2026-09-03T21:33:46.7159681Z",
+  "retrieved_at_utc": "2026-09-05T14:42:46.6569986Z",
   "endpoint": "https://www.gpumode.com/api/leaderboard/538",
   "page": "https://www.gpumode.com/leaderboard/538",
   "leaderboard": "grayscale_v2",
@@ -8,7 +8,7 @@
   "score_units": "seconds; lower is better",
   "sanitized": true,
   "selection": "Top 10 A100 entries plus DjukicAleksej, using public ranking fields only",
-  "total_a100_entries": 106,
+  "total_a100_entries": 107,
   "top10": [
     {
       "rank": 1,
@@ -40,16 +40,16 @@
     },
     {
       "rank": 5,
-      "user_name": "shivbhatia",
+      "user_name": "dannywillowliu-uchi",
       "score": 0.00237499729792277,
-      "submission_id": 779876,
+      "submission_id": 607835,
       "file_name": "submission.py"
     },
     {
       "rank": 6,
-      "user_name": "dannywillowliu-uchi",
+      "user_name": "shivbhatia",
       "score": 0.00237499729792277,
-      "submission_id": 607835,
+      "submission_id": 779876,
       "file_name": "submission.py"
     },
     {

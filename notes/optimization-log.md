@@ -280,3 +280,33 @@ includes the completed runs and normalized source hashes. Future experiments
 should test a new isolated hypothesis rather than automatically repeat this
 block-size trial. v8 remains unchanged and paused for organizer review.
 
+### Post-v11 follow-up: v12, two groups per thread
+
+v12 isolated thread coarsening from the current v10 best. Each 128-thread block
+covers one contiguous 256-group tile: every thread computes group `base + tid`
+and group `base + tid + 128`. Both per-instruction accesses remain coalesced.
+The exact coefficients, grayscale arithmetic, ordinary float4 I/O, compiler
+flags, wrapper checks, error handling, and 128-thread guarded fallback remain
+unchanged. This differs from v4, which mixed four-way grid-stride coarsening
+with read-only loads, explicit FMA operations, and fast-math flags.
+
+v12 passed all three official correctness tests as submission 940605. Static
+coverage also confirmed that every official shape takes the exact 256-group
+path and writes every output group once. A fresh v10 benchmark was again used
+only as a contemporaneous control for the new candidate.
+
+| Benchmark | Submission | Mean (us) | Standard error (us) | Best (us) | Samples |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| v10 control | 940606 | 2369.877259 | 0.903090 | 2368.511915 | 3 |
+| v12 candidate | 940607 | 2366.805315 | 2.238211 | 2362.368107 | 3 |
+
+The candidate mean was 3.071944 us lower, but the uncertainty was large. It was
+ranked once after passing the test and benchmark gates. Submission 940608 passed
+all public and secret checks, then scored 2399.118198 us publicly—23.438228 us
+slower than the retained v10 result. Its embedded ranked-run public benchmark
+mean was 2371.925275 us. v12 was therefore not promoted or retried.
+
+`submission.py` remains the v10 kernel, and the live result remains #7 at
+2375.679970 us, 0.768006 us behind third. These v12 results reinforce the need
+to separate an unranked three-sample benchmark from the scored ranked run.
+
