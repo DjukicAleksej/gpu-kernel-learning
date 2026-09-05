@@ -224,7 +224,7 @@ kernel speedup; repeated score hunting is not a substitute for optimization.
 Recovered historical benchmarks also show substantial between-run variation:
 v6/936207 2484.565417 us, v7/936210 2370.815933 us, v2/936213 2517.333428 us,
 and v3/936214 2517.674764 us. Historical ranked submission 936211 is verified
-to contain v7, not the current canonical v2. Its public score was 2521.770636 us.
+to contain v7, not v2. Its public score was 2521.770636 us.
 These observations do not establish a specific hardware or clock cause.
 
 ### v8 admission rejection
@@ -247,4 +247,36 @@ v7's explicit vector PTX memory operations were informed by HayatoFujihara's
 public GPU Mode submission 230431, distributed in the official
 [GPUMODE/kernelbot-data dataset](https://huggingface.co/datasets/GPUMODE/kernelbot-data/tree/4159cf6b2c6bab208be6dda885d6d87631cc16df).
 The exact-grid path is a separate specialization of this project's v2/v6 work.
+
+### 21:27 UTC follow-up: v11, 64-thread blocks
+
+One isolated launch-geometry hypothesis was tested after quota became available:
+halve v10's block size from 128 to 64 threads, updating the exact-grid shifts
+from 7 to 6. The RGB coefficients, arithmetic, float4 loads/stores, compiler
+flags, wrapper checks, and guarded fallback were unchanged. The smaller blocks
+double the block count; a speedup was a hypothesis, not an assumption.
+
+v11 passed the three official correctness tests in submission 940452. A fresh
+v10 benchmark was run specifically as a contemporaneous comparison for this
+new candidate, not as an automatic retry of previously completed work.
+
+| Benchmark | Submission | Mean (us) | Standard error (us) | Best (us) | Samples |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| v10 control | 940453 | 2369.194587 | 1.487849 | 2366.463900 | 3 |
+| v11 candidate | 940454 | 2366.805236 | 0.341336 | 2366.463900 | 3 |
+
+Both passed the largest-shape correctness check. v11's mean was 2.389352 us
+lower, but both had the same best time and the small sample sizes and separate
+remote runs prevent a claim of a repeatable speedup.
+
+After these validation gates, v11 was ranked once as submission 940455. All
+public and secret correctness checks passed; its public ranked score was
+2390.724952 us, slower than v10's retained 2375.679970 us. v11 was not promoted
+or retried. The live position remains #7, 0.768006 us behind third; the top-three
+goal is still open. `submission.py` remains byte-for-byte identical to v10.
+
+The [public evidence](../pmpp_v2/grayscale_py/results/2026-09-03-public-evidence.json)
+includes the completed runs and normalized source hashes. Future experiments
+should test a new isolated hypothesis rather than automatically repeat this
+block-size trial. v8 remains unchanged and paused for organizer review.
 

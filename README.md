@@ -222,6 +222,10 @@ testing by the service's source-admission filter and is paused pending organizer
 review; it must not be ranked. The rejection and its source-level explanation
 are preserved in [the rejection record](pmpp_v2/grayscale_py/results/v8_admission_rejection.txt).
 
+The later v11 experiment tested 64-thread blocks. It passed correctness but
+ranked slower, so the canonical implementation remains v10. Full benchmark
+comparisons and submission IDs are recorded in the optimization log.
+
 ## Repository structure
 
     gpu-kernel-learning/
@@ -246,7 +250,8 @@ are preserved in [the rejection record](pmpp_v2/grayscale_py/results/v8_admissio
             |   |-- v7_ptx_exact_grid.py
             |   |-- v8_streaming_store.py
             |   |-- v9_block512.py
-            |   `-- v10_block128.py
+            |   |-- v10_block128.py
+            |   `-- v11_block64.py
             |
             `-- results/
                 |-- ranked_result_a100.txt
