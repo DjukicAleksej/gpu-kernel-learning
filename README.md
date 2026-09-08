@@ -209,7 +209,7 @@ The exact leaderboard position can change as new submissions are added.
 
 The top-three goal is still in progress. Fresh official runs and recovered
 historical results are recorded with full precision in
-[the optimization log](notes/optimization-log.md#september-3-2026-follow-up)
+[the optimization log](notes/optimization-log.md#september-3-2026-onward-follow-up)
 and [public API evidence](pmpp_v2/grayscale_py/results/2026-09-03-public-evidence.json).
 Benchmark times are not ranked scores. `submission.py` is an exact copy of v10,
 the kernel that earned the best verified ranked result (940445). The original
@@ -228,6 +228,10 @@ comparisons and submission IDs are recorded in the optimization log.
 
 v12 then tested two adjacent vector groups per thread. It also passed all
 correctness checks but ranked slower, so it was not promoted or repeated.
+
+v13 isolated an A100-supported L1 no-allocation hint on v10's output store. It
+passed correctness but benchmarked slower than a fresh v10 control, so it was
+not ranked or promoted.
 
 ## Repository structure
 
@@ -255,13 +259,17 @@ correctness checks but ranked slower, so it was not promoted or repeated.
             |   |-- v9_block512.py
             |   |-- v10_block128.py
             |   |-- v11_block64.py
-            |   `-- v12_coarsened2.py
+            |   |-- v12_coarsened2.py
+            |   `-- v13_no_allocate_store.py
             |
             `-- results/
+                |-- 2026-09-03-leaderboard.json
+                |-- 2026-09-03-public-evidence.json
                 |-- ranked_result_a100.txt
                 |-- v0_pytorch_benchmark_a100.txt
                 |-- v1_fused_cuda_benchmark_a100.txt
-                `-- v2_vectorized_cuda_benchmark_a100.txt
+                |-- v2_vectorized_cuda_benchmark_a100.txt
+                `-- v8_admission_rejection.txt
 
 ## Running an experiment
 

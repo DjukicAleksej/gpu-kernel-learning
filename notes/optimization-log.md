@@ -171,7 +171,7 @@ Baseline:
 
 Best ranked result:
 
-    2.378069 ms
+    2.375680 ms
 
 Overall speedup:
 
@@ -188,7 +188,7 @@ After that point, changes to launch geometry, branching, cache behavior,
 coarsening, and explicit PTX had much smaller effects because the workload was
 already dominated by global-memory throughput.
 
-## September 3, 2026 follow-up
+## September 3, 2026 onward follow-up
 
 The live top-three target has not yet been achieved. The previous best is
 submission 936167 (v2), 2378.069321 us, rank #7. The third-place threshold at
@@ -309,4 +309,35 @@ mean was 2371.925275 us. v12 was therefore not promoted or retried.
 `submission.py` remains the v10 kernel, and the live result remains #7 at
 2375.679970 us, 0.768006 us behind third. These v12 results reinforce the need
 to separate an unranked three-sample benchmark from the scored ranked run.
+
+### Post-v12 follow-up: v13, L1 no-allocation store hint
+
+v13 returned to the current v10 best and changed only its float4 output store.
+The ordinary C++ store was replaced with explicit PTX:
+
+    st.global.L1::no_allocate.v4.f32
+
+NVIDIA documents `L1::no_allocate` as a cache-allocation performance hint. It
+does not change store correctness or memory-consistency semantics. The PTX store
+grammar permits the four-element FP32 vector form, and this L1 hint is supported
+on A100's sm_80 target. The exact-grid launch, guarded fallback, input loads,
+coefficients, arithmetic, compiler flags, wrapper checks, and launch-error check
+remain identical to v10. See NVIDIA's [PTX store instruction](https://docs.nvidia.com/cuda/parallel-thread-execution/#data-movement-and-conversion-instructions-st)
+and [cache eviction-priority hints](https://docs.nvidia.com/cuda/parallel-thread-execution/#cache-eviction-priority-hints).
+
+The new source is independent of the rejected v8 `.cs` experiment and does not
+rename or resubmit it. A full source scan found no alternate CUDA execution path
+or the service's prohibited substring. v13 then passed every official public
+correctness test as submission 940616.
+
+| Benchmark | Submission | Mean (us) | Standard error (us) | Best (us) | Samples |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| v10 control | 940617 | 2367.829243 | 0.682672 | 2366.463900 | 3 |
+| v13 candidate | 940618 | 2369.535923 | 0.000000 | 2369.535923 | 3 |
+
+The v13 mean was 1.706680 us slower than its fresh v10 control, and its best
+sample was also slower. Accordingly, v13 was not a strong candidate for the
+ranked workflow: it was not ranked, promoted, or retried. `submission.py`
+remains byte-for-byte identical to v10, and the live best remains submission
+940445 at 2375.679970 us (#7), 0.768006 us behind third.
 
