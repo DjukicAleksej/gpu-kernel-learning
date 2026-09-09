@@ -233,6 +233,11 @@ v13 isolated an A100-supported L1 no-allocation hint on v10's output store. It
 passed correctness but benchmarked slower than a fresh v10 control, so it was
 not ranked or promoted.
 
+v14 then tested explicit L1 retention priorities on v10's three overlapping
+input-vector loads. It passed every correctness case, but its benchmark mean
+was 1.707 us slower than the fresh v10 control, so it was also left unranked
+and unpromoted.
+
 ## Repository structure
 
     gpu-kernel-learning/
@@ -260,7 +265,8 @@ not ranked or promoted.
             |   |-- v10_block128.py
             |   |-- v11_block64.py
             |   |-- v12_coarsened2.py
-            |   `-- v13_no_allocate_store.py
+            |   |-- v13_no_allocate_store.py
+            |   `-- v14_input_retention.py
             |
             `-- results/
                 |-- 2026-09-03-leaderboard.json

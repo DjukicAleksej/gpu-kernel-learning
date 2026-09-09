@@ -341,3 +341,33 @@ ranked workflow: it was not ranked, promoted, or retried. `submission.py`
 remains byte-for-byte identical to v10, and the live best remains submission
 940445 at 2375.679970 us (#7), 0.768006 us behind third.
 
+### Post-v13 follow-up: v14, L1 input-retention hints
+
+v14 kept v10's launch geometry, output store, coefficients, arithmetic,
+wrapper checks, and compiler flags unchanged. It isolated cache-eviction
+priority hints on the three 16-byte input loads. The first two loads use
+`ld.global.L1::evict_last.v4.f32`, while the final load uses
+`ld.global.L1::evict_first.v4.f32`.
+
+The experiment targets the overlap between adjacent warp-wide vector-load
+phases. Each phase requests 32 sectors, while the three phases cover only 48
+unique sectors in total; retaining the early sectors could therefore preserve
+reuse until the last phase. These qualifiers are performance hints and do not
+change the values loaded or memory-consistency semantics. NVIDIA documents the
+forms in the [PTX load instruction](https://docs.nvidia.com/cuda/parallel-thread-execution/#data-movement-and-conversion-instructions-ld)
+and supports L1 eviction-priority hints on A100's sm_80 target.
+
+The official test submission 941296 passed all three public correctness cases.
+The contemporaneous control and candidate benchmarks were:
+
+| Benchmark | Submission | Mean (us) | Standard error (us) | Best (us) | Samples |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| v10 control | 941297 | 2369.194587 | 1.365344 | 2366.463900 | 3 |
+| v14 candidate | 941298 | 2370.901267 | 0.903090 | 2369.535923 | 3 |
+
+The v14 mean was 1.706680 us slower than its fresh control, and its best sample
+was also slower. It therefore did not qualify for a ranked submission and was
+not promoted or retried. `submission.py` remains byte-for-byte identical to
+v10. Live verification still shows submission 940445 at 2375.679970 us (#7),
+0.768006 us behind third.
+
