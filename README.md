@@ -238,6 +238,11 @@ input-vector loads. It passed every correctness case, but its benchmark mean
 was 1.707 us slower than the fresh v10 control, so it was also left unranked
 and unpromoted.
 
+v15 revisited v12's two-group coarsening while storing the first group before
+computing the second to shorten its result live range. It passed correctness,
+but its benchmark mean was 1.621 us slower than the fresh v10 control. It was
+not ranked or promoted.
+
 ## Repository structure
 
     gpu-kernel-learning/
@@ -266,7 +271,8 @@ and unpromoted.
             |   |-- v11_block64.py
             |   |-- v12_coarsened2.py
             |   |-- v13_no_allocate_store.py
-            |   `-- v14_input_retention.py
+            |   |-- v14_input_retention.py
+            |   `-- v15_coarsened2_sequential.py
             |
             `-- results/
                 |-- 2026-09-03-leaderboard.json

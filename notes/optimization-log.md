@@ -371,3 +371,29 @@ not promoted or retried. `submission.py` remains byte-for-byte identical to
 v10. Live verification still shows submission 940445 at 2375.679970 us (#7),
 0.768006 us behind third.
 
+### Post-v14 follow-up: v15, sequential two-group coarsening
+
+v15 revisited the v12 coarsening hypothesis because v12's unranked benchmark
+mean had been 3.071944 us faster than its contemporary v10 control. It changed
+the exact hot kernel so each 128-thread block still covers two coalesced
+128-group phases, but writes the first result before beginning the second
+group. This shortens the source-level live range of the first `float4` result.
+The exact RGB coefficients and per-pixel arithmetic order, ordinary `float4`
+loads and stores, compiler flags, wrapper checks, guarded fallback, and launch
+error check remain unchanged.
+
+Submission 941345 passed all three official public correctness cases. A fresh
+v10 control and the v15 candidate then produced:
+
+| Benchmark | Submission | Mean (us) | Standard error (us) | Best (us) | Samples |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| v10 control | 941346 | 2370.218595 | 1.706680 | 2368.511915 | 3 |
+| v15 candidate | 941347 | 2371.839941 | 2.146960 | 2365.439892 | 4 |
+
+Although v15's best sample was 3.072023 us faster, its mean was 1.621346 us
+slower than the control and both runs had substantial variation. That is not a
+strong benchmark result for promotion into the ranked workflow, so v15 was not
+ranked, promoted, or retried. `submission.py` remains byte-for-byte identical
+to v10. Live verification still shows submission 940445 at 2375.679970 us
+(#7), 0.768006 us behind third.
+
