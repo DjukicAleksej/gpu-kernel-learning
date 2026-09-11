@@ -420,3 +420,27 @@ ranked, promoted, or retried. `submission.py` remains byte-for-byte identical
 to v10. Live verification still shows submission 940445 at 2375.679970 us
 (#7), 0.768006 us behind third.
 
+### Post-v16 follow-up: v17, write-through output store
+
+v17 returned to v10 and changed only its ordinary `float4` output store to the
+PTX write-through form `st.global.wt.v4.f32`. This cleanly isolates a mechanism
+that v5 combined with read-only loads, explicit FMA calls, fast-math flags, and
+a different block size. It is independent of v8's rejected `.cs` candidate:
+v8 remains unchanged and paused, and v17 neither renames nor resubmits it. The
+input loads, exact coefficients, arithmetic, 128-thread launch paths, wrapper
+checks, compiler flags, and launch-error check remain identical to v10.
+
+Submission 941590 passed all three official public correctness cases. The
+contemporaneous control and candidate benchmarks were:
+
+| Benchmark | Submission | Mean (us) | Standard error (us) | Best (us) | Samples |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| v10 control | 941591 | 2365.781228 | 0.903090 | 2364.415884 | 3 |
+| v17 candidate | 941592 | 2367.146571 | 1.806180 | 2364.415884 | 3 |
+
+The candidate matched the control's best sample but its mean was 1.365344 us
+slower, with twice the control's standard error. That did not qualify as a
+strong ranked result, so v17 was not ranked, promoted, or retried.
+`submission.py` remains byte-for-byte identical to v10. Live verification
+still shows submission 940445 at 2375.679970 us (#7), 0.768006 us behind third.
+

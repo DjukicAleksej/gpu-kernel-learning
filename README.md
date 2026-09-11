@@ -247,6 +247,10 @@ v16 cleanly isolated CUDA read-only input loads from v10. It passed every
 correctness case, but both its benchmark mean and best sample were slower than
 the fresh control, so it was not ranked or promoted.
 
+v17 isolated v5's write-through output-store mechanism on v10 without the
+other v5 changes. It passed correctness and matched the control's best sample,
+but its benchmark mean was 1.365 us slower. It was not ranked or promoted.
+
 ## Repository structure
 
     gpu-kernel-learning/
@@ -277,7 +281,8 @@ the fresh control, so it was not ranked or promoted.
             |   |-- v13_no_allocate_store.py
             |   |-- v14_input_retention.py
             |   |-- v15_coarsened2_sequential.py
-            |   `-- v16_readonly_loads.py
+            |   |-- v16_readonly_loads.py
+            |   `-- v17_write_through_store.py
             |
             `-- results/
                 |-- 2026-09-03-leaderboard.json
