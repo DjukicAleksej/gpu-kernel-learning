@@ -243,6 +243,10 @@ computing the second to shorten its result live range. It passed correctness,
 but its benchmark mean was 1.621 us slower than the fresh v10 control. It was
 not ranked or promoted.
 
+v16 cleanly isolated CUDA read-only input loads from v10. It passed every
+correctness case, but both its benchmark mean and best sample were slower than
+the fresh control, so it was not ranked or promoted.
+
 ## Repository structure
 
     gpu-kernel-learning/
@@ -272,7 +276,8 @@ not ranked or promoted.
             |   |-- v12_coarsened2.py
             |   |-- v13_no_allocate_store.py
             |   |-- v14_input_retention.py
-            |   `-- v15_coarsened2_sequential.py
+            |   |-- v15_coarsened2_sequential.py
+            |   `-- v16_readonly_loads.py
             |
             `-- results/
                 |-- 2026-09-03-leaderboard.json

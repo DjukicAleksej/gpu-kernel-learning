@@ -1,5 +1,5 @@
 {
-  "retrieved_at_utc": "2026-09-10T09:15:02.7075417Z",
+  "retrieved_at_utc": "2026-09-11T06:59:45.2375739Z",
   "endpoint": "https://www.gpumode.com/api/leaderboard/538",
   "page": "https://www.gpumode.com/leaderboard/538",
   "leaderboard": "grayscale_v2",
@@ -8,7 +8,7 @@
   "score_units": "seconds; lower is better",
   "sanitized": true,
   "selection": "Top 10 A100 entries plus DjukicAleksej, using public ranking fields only",
-  "total_a100_entries": 107,
+  "total_a100_entries": 108,
   "top10": [
     {
       "rank": 1,
@@ -26,30 +26,30 @@
     },
     {
       "rank": 3,
-      "user_name": "thom.gg",
-      "score": 0.0023749119639396668,
-      "submission_id": 781388,
-      "file_name": "grayscale_submission_v2.py"
-    },
-    {
-      "rank": 4,
       "user_name": "HayatoFujihara",
       "score": 0.0023749119639396668,
       "submission_id": 230431,
       "file_name": "grayscale_v2_11.py"
     },
     {
+      "rank": 4,
+      "user_name": "thom.gg",
+      "score": 0.0023749119639396668,
+      "submission_id": 781388,
+      "file_name": "grayscale_submission_v2.py"
+    },
+    {
       "rank": 5,
-      "user_name": "dannywillowliu-uchi",
+      "user_name": "shivbhatia",
       "score": 0.00237499729792277,
-      "submission_id": 607835,
+      "submission_id": 779876,
       "file_name": "submission.py"
     },
     {
       "rank": 6,
-      "user_name": "shivbhatia",
+      "user_name": "dannywillowliu-uchi",
       "score": 0.00237499729792277,
-      "submission_id": 779876,
+      "submission_id": 607835,
       "file_name": "submission.py"
     },
     {

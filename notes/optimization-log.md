@@ -397,3 +397,26 @@ ranked, promoted, or retried. `submission.py` remains byte-for-byte identical
 to v10. Live verification still shows submission 940445 at 2375.679970 us
 (#7), 0.768006 us behind third.
 
+### Post-v15 follow-up: v16, read-only input loads
+
+v16 returned to v10 and changed only its three ordinary `float4` input loads
+to CUDA's `__ldg` read-only loads. This isolates a mechanism that appeared in
+the older v4/v5 experiments alongside other changes. The exact RGB
+coefficients, arithmetic, 128-thread exact-grid and guarded paths, output
+store, compiler flags, validation checks, and launch-error check remain
+unchanged.
+
+Submission 941481 passed all three official public correctness cases. The
+contemporaneous control and candidate benchmarks were:
+
+| Benchmark | Submission | Mean (us) | Standard error (us) | Best (us) | Samples |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| v10 control | 941482 | 2366.186698 | 0.877999 | 2364.639997 | 3 |
+| v16 candidate | 941483 | 2369.024038 | 1.356602 | 2367.360115 | 3 |
+
+The v16 mean was 2.837340 us slower than the control, and its best sample was
+2.720118 us slower. It was therefore not a strong ranked candidate and was not
+ranked, promoted, or retried. `submission.py` remains byte-for-byte identical
+to v10. Live verification still shows submission 940445 at 2375.679970 us
+(#7), 0.768006 us behind third.
+
