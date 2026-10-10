@@ -267,6 +267,10 @@ A subsequent pair again displayed 2.37 ms for both v10 and v18, with overlapping
 rounded uncertainty. The public output is not precise enough to establish a
 v18 improvement, so the canonical source remains v10.
 
+v19 tested aligned PTX `.cg` input loads that bypass L1. It passed correctness,
+but benchmarked at 3.62 ms against a fresh v10 control at 2.37 ms, so it was
+not ranked. The current best remains the v10 submission.
+
 ## Repository structure
 
     gpu-kernel-learning/
@@ -299,7 +303,8 @@ v18 improvement, so the canonical source remains v10.
             |   |-- v15_coarsened2_sequential.py
             |   |-- v16_readonly_loads.py
             |   |-- v17_write_through_store.py
-            |   `-- v18_exact_coeff_fma.py
+            |   |-- v18_exact_coeff_fma.py
+            |   `-- v19_global_cache_loads.py
             |
             `-- results/
                 |-- 2026-09-03-leaderboard.json

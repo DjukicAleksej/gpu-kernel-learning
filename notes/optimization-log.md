@@ -502,3 +502,24 @@ The live API was rechecked at 2026-10-10T11:01:59Z and remains unchanged:
 940445 is #8, 1.280010 us behind third. Sanitized evidence now includes 52
 unique public submissions/results.
 
+### October 10 follow-up: v19, bypass L1 for input vectors
+
+v19 changes only how the three aligned `float4` input vectors are fetched:
+inline PTX `ld.global.cg.v4.f32` bypasses L1 while retaining the original
+coalesced addresses. The exact v10 arithmetic and RGB coefficients, output
+store, 128-thread exact-grid/guarded launch paths, checks, and compiler flags
+are otherwise unchanged. All three official correctness cases passed in
+submission 950450.
+
+A fresh v10 control (950451) displayed 2.37 ±0.001 ms. v19 (950453) displayed
+3.62 ±0.002 ms, with displayed best/worst of 3.62/3.63 ms. This is a clear
+performance regression for the cache-bypass load policy, so v19 was not
+ranked. Keep the experiment as evidence and leave canonical `submission.py`
+unchanged at v10. The sanitized submission entries include normalized local
+source hashes; raw benchmark fields are not available in the public CLI show
+output.
+
+The live API was refreshed at 2026-10-10T12:14:50Z: submission 940445 remains
+#8 at 2375.679970 us, 1.280010 us behind third place (Kernel-Zhang, 786700,
+2374.399960 us). The leaderboard snapshot and public evidence were updated.
+
