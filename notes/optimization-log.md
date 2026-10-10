@@ -444,3 +444,33 @@ strong ranked result, so v17 was not ranked, promoted, or retried.
 `submission.py` remains byte-for-byte identical to v10. Live verification
 still shows submission 940445 at 2375.679970 us (#7), 0.768006 us behind third.
 
+### October 10 follow-up: v18, explicit correctly rounded FMA
+
+v18 changes only the hot arithmetic from v10: nested `__fmaf_rn` calls
+explicitly form the two multiply-add stages while retaining v10's exact
+`0.2989f`, `0.5870f`, and `0.1140f` coefficients. The 128-thread exact-grid
+and guarded paths, vector loads/stores, wrapper validation, launch checks, and
+compiler flags remain unchanged. The source passed the three official public
+correctness tests in submission 950316 before benchmark comparison.
+
+After the previous six-per-hour test-submission limit expired, a fresh
+non-ranked v10 control (950356) and v18 candidate (950360) both completed
+their official A100 benchmark. The public CLI reported rounded summaries:
+
+| Benchmark | Submission | CLI mean display | CLI uncertainty display |
+| --- | ---: | ---: | ---: |
+| v10 control | 950356 | 2.37 ms | ±0.000 ms |
+| v18 candidate | 950360 | 2.37 ms | ±0.001 ms |
+
+The CLI's public `submissions show --no-code` response does not expose the raw
+benchmark fields, so only its rounded summary is retained in the sanitized
+evidence file. These readings do not establish a candidate advantage; v18 was
+not ranked. Keep `submission.py` on v10 and wait for better evidence or a
+concrete isolated optimization. v8 remains unchanged and paused pending
+organizer review.
+
+Live leaderboard verification at 2026-10-10T09:51:54Z found v10 submission
+940445 still at #8, 2375.679970 us. Third place was Kernel-Zhang, submission
+786700, at 2374.399960 us; the gap is 1.280010 us. The sanitized snapshot is
+in `pmpp_v2/grayscale_py/results/2026-09-03-leaderboard.json`.
+

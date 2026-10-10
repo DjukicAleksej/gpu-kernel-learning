@@ -1,10 +1,10 @@
-﻿# GPU Kernel Optimization — A100 #7
+﻿# GPU Kernel Optimization — A100 #8
 
 CUDA optimization experiments for GPU Mode's `grayscale_v2` challenge.
 
 ## Result
 
-**#7 on the NVIDIA A100 leaderboard**
+**#8 on the NVIDIA A100 leaderboard** (checked 2026-10-10)
 
 - Best ranked runtime: **2375.680 us** (v10, submission 940445)
 - Problem: `grayscale_v2`
@@ -26,7 +26,7 @@ CUDA tuning.
 | v0 | Official PyTorch baseline | 10.6 ms |
 | v1 | Fused CUDA kernel | 2.55 ms |
 | v2 | `float4` vectorized memory access | 2.37 ms |
-| Ranked best | v10: 128-thread exact-grid CUDA | **2375.680 us — #7** |
+| Ranked best | v10: 128-thread exact-grid CUDA | **2375.680 us — #8** |
 
 The largest improvement came from kernel fusion.
 
@@ -200,7 +200,7 @@ GPU Mode `grayscale_v2`
 
     GPU: NVIDIA A100
     Best ranked runtime: 2375.680 us
-    Rank at time recorded: #7
+    Rank at original result: #7; current rank (2026-10-10): #8
     Correctness: PASSED
 
 The exact leaderboard position can change as new submissions are added.
@@ -213,8 +213,8 @@ historical results are recorded with full precision in
 and [public API evidence](pmpp_v2/grayscale_py/results/2026-09-03-public-evidence.json).
 Benchmark times are not ranked scores. `submission.py` is an exact copy of v10,
 the kernel that earned the best verified ranked result (940445). The original
-v2 result was 2378.069 us; the new score improves it by 2.389 us. The gap to
-third place at verification was 0.768 us, so the top-three goal remains open.
+v2 result was 2378.069 us; the new score improves it by 2.389 us. The current
+gap to third place is 1.280 us, so the top-three goal remains open.
 
 New isolated experiments include v8's cached-streaming output stores, v9's
 512-thread blocks, and v10's 128-thread exact grid. v8 was rejected before GPU
@@ -251,6 +251,13 @@ v17 isolated v5's write-through output-store mechanism on v10 without the
 other v5 changes. It passed correctness and matched the control's best sample,
 but its benchmark mean was 1.365 us slower. It was not ranked or promoted.
 
+v18 isolated explicitly rounded FMA arithmetic with the original exact RGB
+coefficients. Its correctness test passed. A fresh control and candidate
+benchmark both displayed 2.37 ms in the public CLI, but displayed uncertainties
+of ±0.000 ms and ±0.001 ms respectively; since the display is rounded and does
+not expose the raw measurement fields, this is inconclusive. v18 was not
+ranked, and the canonical submission remains v10.
+
 ## Repository structure
 
     gpu-kernel-learning/
@@ -282,7 +289,8 @@ but its benchmark mean was 1.365 us slower. It was not ranked or promoted.
             |   |-- v14_input_retention.py
             |   |-- v15_coarsened2_sequential.py
             |   |-- v16_readonly_loads.py
-            |   `-- v17_write_through_store.py
+            |   |-- v17_write_through_store.py
+            |   `-- v18_exact_coeff_fma.py
             |
             `-- results/
                 |-- 2026-09-03-leaderboard.json
