@@ -3,7 +3,7 @@
   "source": "Official authenticated Popcorn user-submission API",
   "source_implementation": "https://github.com/gpu-mode/popcorn-cli/blob/main/src/service/mod.rs",
   "sanitized": true,
-  "latest_append_retrieved_at_utc": "2026-10-10T09:51:54.4882715Z",
+  "latest_append_retrieved_at_utc": "2026-10-10T10:26:44.4528406Z",
   "canonical_source_verification": {
     "verified_at_utc": "2026-09-03T21:33:47.0623041Z",
     "canonical_source": "pmpp_v2/grayscale_py/submission.py",
@@ -1929,6 +1929,52 @@
           "end_time": "2026-10-10T09:51:12.955538Z",
           "score_seconds": null,
           "cli_displayed_summary": "2.37 ± 0.001 ms; best 2.37 ms; worst 2.37 ms (display rounded)",
+          "raw_result_fields_not_available_from_public_cli_show": true
+        }
+      ]
+    },
+    {
+      "submission_id": 950382,
+      "leaderboard": "grayscale_v2",
+      "leaderboard_id": 538,
+      "submitted_file_name": "v18_exact_coeff_fma.py",
+      "submitted_at": "2026-10-10T10:22:53.530275Z",
+      "done": true,
+      "retrieved_at_utc": "2026-10-10T10:26:44.4528406Z",
+      "local_source": "pmpp_v2/grayscale_py/experiments/v18_exact_coeff_fma.py",
+      "local_code_normalized_sha256": "622b8225f1e89010e6b868bbda0e2e6cf84324a322d083469aedf62e198462e3",
+      "public_runs": [
+        {
+          "mode": "benchmark",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-10-10T10:24:11.483923Z",
+          "end_time": "2026-10-10T10:24:20.068863Z",
+          "score_seconds": null,
+          "cli_displayed_summary": "2.38 ± 0.001 ms; best 2.38 ms; worst 2.38 ms (display rounded)",
+          "raw_result_fields_not_available_from_public_cli_show": true
+        }
+      ]
+    },
+    {
+      "submission_id": 950384,
+      "leaderboard": "grayscale_v2",
+      "leaderboard_id": 538,
+      "submitted_file_name": "v10_block128.py",
+      "submitted_at": "2026-10-10T10:24:25.458798Z",
+      "done": true,
+      "retrieved_at_utc": "2026-10-10T10:26:44.4528406Z",
+      "local_source": "pmpp_v2/grayscale_py/experiments/v10_block128.py",
+      "local_code_normalized_sha256": "d6531c1309a8d56f53590fc7cf545fe002e3eb9cbdb5730c34c805f5034efc6d",
+      "public_runs": [
+        {
+          "mode": "benchmark",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-10-10T10:26:00.091581Z",
+          "end_time": "2026-10-10T10:26:08.128501Z",
+          "score_seconds": null,
+          "cli_displayed_summary": "2.48 ± 0.000 ms; best 2.48 ms; worst 2.48 ms (display rounded)",
           "raw_result_fields_not_available_from_public_cli_show": true
         }
       ]

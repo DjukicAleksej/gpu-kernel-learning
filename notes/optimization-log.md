@@ -474,3 +474,19 @@ Live leaderboard verification at 2026-10-10T09:51:54Z found v10 submission
 786700, at 2374.399960 us; the gap is 1.280010 us. The sanitized snapshot is
 in `pmpp_v2/grayscale_py/results/2026-09-03-leaderboard.json`.
 
+A reversed-order repeat pair was then run: v18 submission 950382 completed at
+10:24:20Z and the v10 control 950384 completed at 10:26:08Z. The public CLI
+reported 2.38 ±0.001 ms for v18 and 2.48 ±0.000 ms for v10. This apparent
+100-us gap conflicts with the preceding pair, where both displayed 2.37 ms,
+and with the earlier 2.48-ms control submissions in the evidence archive.
+Because the control itself shifted substantially between nearby sessions and
+raw measurements are unavailable from the public CLI, service/device variance
+dominates the comparison; it is not evidence of a v18 speedup. No ranked
+submission was made, `submission.py` remains v10, and v18 should stay
+unranked absent a more stable benchmark method or organizer guidance.
+
+The live API was checked again at 2026-10-10T10:26:44Z: submission 940445 is
+still #8 at 2375.679970 us, with a 1.280010-us gap to third place (Kernel-Zhang,
+submission 786700 at 2374.399960 us). The top-ten snapshot and public benchmark
+records were refreshed in the results directory and pushed to GitHub.
+

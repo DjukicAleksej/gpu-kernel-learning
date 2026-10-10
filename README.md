@@ -258,6 +258,11 @@ of ±0.000 ms and ±0.001 ms respectively; since the display is rounded and does
 not expose the raw measurement fields, this is inconclusive. v18 was not
 ranked, and the canonical submission remains v10.
 
+A reversed-order repeat showed 2.38 ms for v18 and 2.48 ms for the v10 control,
+but the control's shift from its prior 2.37 ms display is far larger than the
+candidate effect under investigation. Treat that pair as service/device noise,
+not a verified gain; v18 remains unranked.
+
 ## Repository structure
 
     gpu-kernel-learning/
