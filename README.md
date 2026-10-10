@@ -263,6 +263,10 @@ but the control's shift from its prior 2.37 ms display is far larger than the
 candidate effect under investigation. Treat that pair as service/device noise,
 not a verified gain; v18 remains unranked.
 
+A subsequent pair again displayed 2.37 ms for both v10 and v18, with overlapping
+rounded uncertainty. The public output is not precise enough to establish a
+v18 improvement, so the canonical source remains v10.
+
 ## Repository structure
 
     gpu-kernel-learning/

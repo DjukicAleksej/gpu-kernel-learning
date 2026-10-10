@@ -490,3 +490,15 @@ still #8 at 2375.679970 us, with a 1.280010-us gap to third place (Kernel-Zhang,
 submission 786700 at 2374.399960 us). The top-ten snapshot and public benchmark
 records were refreshed in the results directory and pushed to GitHub.
 
+A third contemporaneous pair checked whether the earlier 2.48-ms control was
+an outlier: v10 control 950404 displayed 2.37 ±0.001 ms and v18 950406 displayed
+2.37 ±0.002 ms. Together with the initial 2.37/2.37-ms pair, the repeated
+rounding shows no measurable v18 lead. The second pair's 2.38/2.48-ms readings
+are not reproducible and should be treated as transient service/device
+variation. These benchmark displays are too coarse to support ranking v18, so
+no ranked submission was made and canonical v10 was left unchanged.
+
+The live API was rechecked at 2026-10-10T11:01:59Z and remains unchanged:
+940445 is #8, 1.280010 us behind third. Sanitized evidence now includes 52
+unique public submissions/results.
+
