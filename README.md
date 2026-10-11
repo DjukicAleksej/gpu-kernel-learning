@@ -271,6 +271,11 @@ v19 tested aligned PTX `.cg` input loads that bypass L1. It passed correctness,
 but benchmarked at 3.62 ms against a fresh v10 control at 2.37 ms, so it was
 not ranked. The current best remains the v10 submission.
 
+v20 requested a 16-block-per-SM residency target for v10's 128-thread kernels.
+It passed correctness, but its benchmark matched the fresh v10 control at the
+CLI's displayed precision (2.37 ±0.001 ms). It was not ranked; v10 remains the
+canonical submission.
+
 ## Repository structure
 
     gpu-kernel-learning/
@@ -304,7 +309,8 @@ not ranked. The current best remains the v10 submission.
             |   |-- v16_readonly_loads.py
             |   |-- v17_write_through_store.py
             |   |-- v18_exact_coeff_fma.py
-            |   `-- v19_global_cache_loads.py
+            |   |-- v19_global_cache_loads.py
+            |   `-- v20_launch_bounds16.py
             |
             `-- results/
                 |-- 2026-09-03-leaderboard.json

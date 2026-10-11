@@ -523,3 +523,23 @@ The live API was refreshed at 2026-10-10T12:14:50Z: submission 940445 remains
 #8 at 2375.679970 us, 1.280010 us behind third place (Kernel-Zhang, 786700,
 2374.399960 us). The leaderboard snapshot and public evidence were updated.
 
+### October 11 follow-up: v20, launch-bounds occupancy target
+
+v20 changes only the kernel launch metadata: `__launch_bounds__(128, 16)` asks
+the compiler to reserve resources so up to sixteen 128-thread blocks (the
+A100's 64-warp thread limit) can reside per SM. The arithmetic, exact RGB
+coefficients, input loads, output store, thread geometry, compiler flags, and
+wrapper checks match v10. All three public correctness cases passed in
+submission 951448.
+
+A fresh v10 control (951635) and v20 candidate (951639) both displayed
+2.37 ±0.001 ms. This one rounded pair shows no measurable advantage and does
+not justify ranking v20. An earlier v10 control (951451) completed, but the
+terminal output containing its timing was interrupted; it is recorded as
+passed without inventing a measurement. Keep `submission.py` on v10.
+
+The live API was refreshed at 2026-10-11T17:14:19Z: v10 submission 940445 is
+still #8 at 2375.679970 us. Third place remains Kernel-Zhang (submission
+786700) at 2374.399960 us, a 1.280010-us gap. The sanitized leaderboard and
+submission evidence were refreshed.
+

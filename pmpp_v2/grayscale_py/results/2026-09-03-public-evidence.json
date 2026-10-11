@@ -3,7 +3,7 @@
   "source": "Official authenticated Popcorn user-submission API",
   "source_implementation": "https://github.com/gpu-mode/popcorn-cli/blob/main/src/service/mod.rs",
   "sanitized": true,
-  "latest_append_retrieved_at_utc": "2026-10-10T12:14:50.2531233Z",
+  "latest_append_retrieved_at_utc": "2026-10-11T17:14:19.5142883Z",
   "canonical_source_verification": {
     "verified_at_utc": "2026-09-03T21:33:47.0623041Z",
     "canonical_source": "pmpp_v2/grayscale_py/submission.py",
@@ -2089,6 +2089,97 @@
           "end_time": "2026-10-10T12:14:28.896807Z",
           "score_seconds": null,
           "cli_displayed_summary": "3.62 ± 0.002 ms; best 3.62 ms; worst 3.63 ms (display rounded)",
+          "raw_result_fields_not_available_from_public_cli_show": true
+        }
+      ]
+    },
+    {
+      "submission_id": 951448,
+      "leaderboard": "grayscale_v2",
+      "leaderboard_id": 538,
+      "submitted_file_name": "v20_launch_bounds16.py",
+      "submitted_at": "2026-10-11T12:47:45.204493Z",
+      "done": true,
+      "retrieved_at_utc": "2026-10-11T17:14:19.5142883Z",
+      "local_source": "pmpp_v2/grayscale_py/experiments/v20_launch_bounds16.py",
+      "local_code_normalized_sha256": "4970e1428e0f0a084512196140d9b4332deb18f70d24799054956bc310271943",
+      "public_runs": [
+        {
+          "mode": "test",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-10-11T12:49:18.825557Z",
+          "end_time": "2026-10-11T12:49:30.198550Z",
+          "score_seconds": null,
+          "cli_displayed_summary": "passed three public cases: 128, 256, 512"
+        }
+      ]
+    },
+    {
+      "submission_id": 951451,
+      "leaderboard": "grayscale_v2",
+      "leaderboard_id": 538,
+      "submitted_file_name": "v10_block128.py",
+      "submitted_at": "2026-10-11T12:49:38.392564Z",
+      "done": true,
+      "retrieved_at_utc": "2026-10-11T17:14:19.5142883Z",
+      "local_source": "pmpp_v2/grayscale_py/experiments/v10_block128.py",
+      "local_code_normalized_sha256": "d6531c1309a8d56f53590fc7cf545fe002e3eb9cbdb5730c34c805f5034efc6d",
+      "public_runs": [
+        {
+          "mode": "benchmark",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-10-11T12:51:25.771812Z",
+          "end_time": "2026-10-11T12:51:45.251609Z",
+          "score_seconds": null,
+          "cli_displayed_summary": "unavailable: terminal output was interrupted; public CLI confirms benchmark passed",
+          "raw_result_fields_not_available_from_public_cli_show": true
+        }
+      ]
+    },
+    {
+      "submission_id": 951635,
+      "leaderboard": "grayscale_v2",
+      "leaderboard_id": 538,
+      "submitted_file_name": "v10_block128.py",
+      "submitted_at": "2026-10-11T17:10:07.677509Z",
+      "done": true,
+      "retrieved_at_utc": "2026-10-11T17:14:19.5142883Z",
+      "local_source": "pmpp_v2/grayscale_py/experiments/v10_block128.py",
+      "local_code_normalized_sha256": "d6531c1309a8d56f53590fc7cf545fe002e3eb9cbdb5730c34c805f5034efc6d",
+      "public_runs": [
+        {
+          "mode": "benchmark",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-10-11T17:12:06.596462Z",
+          "end_time": "2026-10-11T17:12:17.962994Z",
+          "score_seconds": null,
+          "cli_displayed_summary": "2.37 ± 0.001 ms; best 2.37 ms; worst 2.37 ms (display rounded)",
+          "raw_result_fields_not_available_from_public_cli_show": true
+        }
+      ]
+    },
+    {
+      "submission_id": 951639,
+      "leaderboard": "grayscale_v2",
+      "leaderboard_id": 538,
+      "submitted_file_name": "v20_launch_bounds16.py",
+      "submitted_at": "2026-10-11T17:12:27.313247Z",
+      "done": true,
+      "retrieved_at_utc": "2026-10-11T17:14:19.5142883Z",
+      "local_source": "pmpp_v2/grayscale_py/experiments/v20_launch_bounds16.py",
+      "local_code_normalized_sha256": "4970e1428e0f0a084512196140d9b4332deb18f70d24799054956bc310271943",
+      "public_runs": [
+        {
+          "mode": "benchmark",
+          "runner": "A100",
+          "passed": true,
+          "start_time": "2026-10-11T17:13:43.497474Z",
+          "end_time": "2026-10-11T17:13:55.113021Z",
+          "score_seconds": null,
+          "cli_displayed_summary": "2.37 ± 0.001 ms; best 2.37 ms; worst 2.37 ms (display rounded)",
           "raw_result_fields_not_available_from_public_cli_show": true
         }
       ]
