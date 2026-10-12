@@ -276,6 +276,9 @@ It passed correctness, but its benchmark matched the fresh v10 control at the
 CLI's displayed precision (2.37 ±0.001 ms). It was not ranked; v10 remains the
 canonical submission.
 
+A second v10/v20 pair again displayed the same 2.37 ms mean, with overlapping
+uncertainties; v20 remains unranked.
+
 ## Repository structure
 
     gpu-kernel-learning/

@@ -543,3 +543,11 @@ still #8 at 2375.679970 us. Third place remains Kernel-Zhang (submission
 786700) at 2374.399960 us, a 1.280010-us gap. The sanitized leaderboard and
 submission evidence were refreshed.
 
+A second fresh confirmation pair ran on October 12: v10 control 952680
+displayed 2.37 ±0.002 ms and v20 952682 displayed 2.37 ±0.001 ms. The rounded
+means are again identical, so the `__launch_bounds__` hint has no demonstrated
+advantage. v20 remains unranked and the canonical submission remains v10.
+The live API at 2026-10-12T16:15:32Z still places submission 940445 at #8,
+1.280010 us behind third; the public evidence and leaderboard snapshot were
+updated.
+
